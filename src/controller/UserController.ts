@@ -27,7 +27,7 @@ export class UserController {
       });
 
       req.session.user = firstname + " " + lastname;
-      res.status(200).json(response);
+      res.status(200).json({ ...response, user: req.session.user });
     } catch (error) {
       return next(error);
     }

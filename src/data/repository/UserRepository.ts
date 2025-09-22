@@ -26,7 +26,7 @@ export class UserRepository {
     return {
       id: newUser.insertedId,
       status: Status.SUCCESS,
-      message: "Added to database",
+      message: "User registered successfully",
     };
   }
 

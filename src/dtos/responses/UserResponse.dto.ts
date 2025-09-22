@@ -11,6 +11,7 @@ export interface UserResponse {
   id?: Id;
   status: Status;
   message: string;
+  user?: string;
 }
 
 export interface UserLoginResponse {
