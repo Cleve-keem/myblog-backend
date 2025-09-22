@@ -1,6 +1,12 @@
 import { NextFunction, Request, Response } from "express";
 import { UserService } from "../services/UserServices";
-import { UserSignUpRequest } from "../dtos/requests/UserRequest.dtos";
+import {
+  UserLoginRequest,
+  UserSignUpRequest,
+} from "../dtos/requests/UserRequest.dtos";
+import { User } from "../data/model/User";
+import hashPassword from "../utils/hashPassword";
+import * as bcrypt from "bcrypt";
 
 declare module "express-session" {
   interface SessionData {
@@ -17,12 +23,14 @@ export class UserController {
     const { firstname, lastname, email, password }: UserSignUpRequest =
       req.body;
 
+    const hashedPassword = await hashPassword(password);
+
     try {
       const response = await UserService.createUser({
         firstname,
         lastname,
         email,
-        password,
+        hashedPassword,
         createdAt: new Date(),
       });
 
@@ -30,6 +38,36 @@ export class UserController {
       res.status(200).json({ ...response, user: req.session.user });
     } catch (error) {
       return next(error);
+    }
+  }
+
+  public static async login(
+    req: Request,
+    res: Response,
+    next: NextFunction
+  ): Promise<void> {
+    try {
+      const { email, password }: UserLoginRequest = req.body;
+      const user: User = await UserService.getUserByEmail(email);
+
+      if (!user) {
+        throw "User doesn't exit";
+      }
+
+      const isMatch: Boolean = await bcrypt.compare(
+        password,
+        user?.hashedPassword
+      );
+
+      if (!isMatch) {
+        throw "Invalid Credentials";
+      }
+
+      res.status(200).json({ status: "success", message: "Login successful" });
+    } catch (error) {
+      console.error(error);
+      next(error);
+      throw error;
     }
   }
 }

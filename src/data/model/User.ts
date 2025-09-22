@@ -7,6 +7,6 @@ export interface User {
   firstname: string;
   lastname: string;
   email: string;
-  password: string;
+  hashedPassword: string;
   createdAt: Date;
 }
