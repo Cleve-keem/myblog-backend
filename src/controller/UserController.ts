@@ -17,8 +17,8 @@ declare module "express-session" {
 export class UserController {
   public static async registerUser(
     req: Request,
-    res: Response,
-    next: NextFunction
+    res: Response
+    // next: NextFunction
   ) {
     const { firstname, lastname, email, password }: UserSignUpRequest =
       req.body;
@@ -37,7 +37,9 @@ export class UserController {
       req.session.user = firstname + " " + lastname;
       res.status(200).json({ ...response, user: req.session.user });
     } catch (error) {
-      return next(error);
+      res
+        .status(500)
+        .json({ status: "failure", message: "Internal error", error });
     }
   }
 
