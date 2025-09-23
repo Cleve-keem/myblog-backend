@@ -43,8 +43,8 @@ export class UserController {
 
   public static async loginUser(
     req: Request,
-    res: Response,
-    next: NextFunction
+    res: Response
+    // next: NextFunction
   ): Promise<void> {
     try {
       const { email, password }: UserLoginRequest = req.body;
@@ -66,8 +66,10 @@ export class UserController {
       res.status(200).json({ status: "success", message: "Login successful" });
     } catch (error) {
       console.error(error);
-      next(error);
-      throw error;
+      res.status(400).json({
+        status: "failure",
+        message: "Login failed",
+      });
     }
   }
 }
