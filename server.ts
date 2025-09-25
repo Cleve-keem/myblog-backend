@@ -7,7 +7,7 @@ import userRoutes from "./src/routers/userRoutes";
 
 dotenv.config();
 const app = express();
-const PORT = process.env.PORT;
+const PORT = process.env.PORT || 3000;
 
 app.use(express.json());
 app.use(
@@ -18,12 +18,26 @@ app.use(
   })
 );
 
+// app.use(
+//   session({
+//     secret: process.env.SESSION_SECRET || "defaultsecret",
+//     resave: false,
+//     saveUninitialized: true,
+//     cookie: { secure: false, httpOnly: true, maxAge: 1000 * 60 * 60 }, // 1 hour,
+//   })
+// );
+
 app.use(
   session({
-    secret: process.env.SESSION_SECRET || "defaultsecret",
+    secret: process.env.SESSION_SECRET!,
     resave: false,
-    saveUninitialized: true,
-    cookie: { secure: false, httpOnly: true, maxAge: 1000 * 60 * 60 }, // 1 hour,
+    saveUninitialized: false,
+    cookie: {
+      secure: process.env.NODE_ENV === "production",
+      httpOnly: true,
+      sameSite: process.env.NODE_ENV === "production" ? "none" : "lax",
+      maxAge: 1000 * 60 * 60,
+    },
   })
 );
 

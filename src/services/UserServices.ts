@@ -8,12 +8,10 @@ export class UserService {
     return response;
   }
 
-  static async getUserByEmail(email: string): Promise<User> {
-    const userCredentials: User = await UserRepository.findUserByEmail(email);
-    if (!userCredentials) {
-      throw new Error("User doesn't exist");
-    }
-
-    return userCredentials;
+  static async getUserByEmail(email: string): Promise<User | null> {
+    const userCredentials: User | null = await UserRepository.findUserByEmail(
+      email
+    );
+    return userCredentials ?? null;
   }
 }

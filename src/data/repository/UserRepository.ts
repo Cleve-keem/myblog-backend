@@ -35,13 +35,8 @@ export class UserRepository {
     return user;
   }
 
-  static async findUserByEmail(email: string): Promise<User> {
+  static async findUserByEmail(email: string): Promise<User | null> {
     const user = await this.collection.findOne({ email: email });
-
-    if (!user) {
-      throw "User doesn't exist";
-    }
-
-    return user;
+    return user ?? null;
   }
 }
