@@ -1,10 +1,9 @@
-import { NextFunction, Request, Response } from "express";
+import { Request, Response } from "express";
 import { UserService } from "../services/UserServices";
 import {
   UserLoginRequest,
   UserSignUpRequest,
 } from "../dtos/requests/UserRequest.dtos";
-import { User } from "../data/model/User";
 import hashPassword from "../utils/hashPassword";
 import * as bcrypt from "bcrypt";
 import { Status } from "../dtos/responses/UserResponse.dto";
@@ -119,9 +118,10 @@ export class UserController {
 
       const isMatch = await bcrypt.compare(password, user.hashedPassword);
       if (!isMatch) {
-        return res
-          .status(401)
-          .json({ status: Status.FAILURE, message: "Invalid credentials" });
+        return res.status(401).json({
+          status: Status.FAILURE,
+          message: "Invalid email or password!",
+        });
       }
 
       // success: set session and return minimal user info
