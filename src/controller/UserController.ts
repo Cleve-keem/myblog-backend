@@ -75,7 +75,6 @@ export class UserController {
   //     });
   //   }
   // }
-  // UserController.ts (recommended)
   public static async registerUser(req: Request, res: Response) {
     const { firstname, lastname, email, password }: UserSignUpRequest =
       req.body;
@@ -90,13 +89,13 @@ export class UserController {
         createdAt: new Date(),
       });
 
-      // attach session
+      if (response.status === Status.FAILURE) {
+        return res.status(400).json({ response });
+      }
+
       req.session.user = `${firstname} ${lastname}`;
 
-      // send the repository response but also include the session user if success
-      return res
-        .status(response.status === Status.SUCCESS ? 201 : 400)
-        .json({ ...response, user: req.session.user });
+      return res.status(201).json({ ...response, user: req.session.user });
     } catch (error) {
       console.error("Register error:", error);
       return res
