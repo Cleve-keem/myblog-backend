@@ -6,7 +6,7 @@ export default class MailService {
     token: string
   ) {
     const verificationMailTemplate: Record<string, string> = {
-      from: `${process.env.SMTP_USER}`,
+      from: `${process.env.APP_NAME} <${process.env.SMTP_USER}>`,
       to: data.email!,
       subject: "Account verification",
       html: `
