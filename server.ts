@@ -13,19 +13,10 @@ app.use(express.json());
 app.use(
   cors({
     origin: ["http://localhost:5173", "https://hackhimblog.netlify.app"],
-    methods: ["GET", "POST", "PUT", "DELETE"],
+    methods: ["GET", "POST", "PUT", "DELETE", "PATCH"],
     credentials: true,
   })
 );
-
-// app.use(
-//   session({
-//     secret: process.env.SESSION_SECRET || "defaultsecret",
-//     resave: false,
-//     saveUninitialized: true,
-//     cookie: { secure: false, httpOnly: true, maxAge: 1000 * 60 * 60 }, // 1 hour,
-//   })
-// );
 
 app.use(
   session({

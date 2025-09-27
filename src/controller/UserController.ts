@@ -8,6 +8,8 @@ import hashPassword from "../utils/hashPassword";
 import * as bcrypt from "bcrypt";
 import { Status } from "../dtos/responses/UserResponse.dto";
 import { UserRepository } from "../data/repository/UserRepository";
+import jwt, { JwtPayload } from "jsonwebtoken";
+import MailService from "../services/mailService";
 
 declare module "express-session" {
   interface SessionData {
@@ -15,66 +17,9 @@ declare module "express-session" {
   }
 }
 
+const SECRET = process.env.JWT_SECRETKEY as string;
+
 export class UserController {
-  // public static async registerUser(
-  //   req: Request,
-  //   res: Response
-  //   // next: NextFunction
-  // ) {
-  //   const { firstname, lastname, email, password }: UserSignUpRequest =
-  //     req.body;
-
-  //   const hashedPassword = await hashPassword(password);
-
-  //   try {
-  //     const response = await UserService.createUser({
-  //       firstname,
-  //       lastname,
-  //       email,
-  //       hashedPassword,
-  //       createdAt: new Date(),
-  //     });
-
-  //     req.session.user = firstname + " " + lastname;
-  //     res.status(200).json({ ...response, user: req.session.user });
-  //   } catch (error) {
-  //     res
-  //       .status(500)
-  //       .json({ status: "failure", message: "Internal error", error });
-  //   }
-  // }
-
-  // public static async loginUser(
-  //   req: Request,
-  //   res: Response
-  //   // next: NextFunction
-  // ): Promise<void> {
-  //   try {
-  //     const { email, password }: UserLoginRequest = req.body;
-  //     const user: User = await UserService.getUserByEmail(email);
-
-  //     if (!user) {
-  //       throw "User doesn't exit";
-  //     }
-
-  //     const isMatch: Boolean = await bcrypt.compare(
-  //       password,
-  //       user?.hashedPassword
-  //     );
-
-  //     if (!isMatch) {
-  //       throw "Invalid Credentials";
-  //     }
-
-  //     res.status(200).json({ status: "success", message: "Login successful" });
-  //   } catch (error) {
-  //     console.error(error);
-  //     res.status(400).json({
-  //       status: "failure",
-  //       message: "Login failed",
-  //     });
-  //   }
-  // }
   public static async registerUser(req: Request, res: Response) {
     const { firstname, lastname, email, password }: UserSignUpRequest =
       req.body;
@@ -86,6 +31,7 @@ export class UserController {
         lastname,
         email,
         hashedPassword,
+        isVefied: false,
         createdAt: new Date(),
       });
 
@@ -93,14 +39,31 @@ export class UserController {
         return res.status(400).json({ response });
       }
 
-      req.session.user = `${firstname} ${lastname}`;
+      // req.session.user = `${firstname} ${lastname}`;
+      let token = jwt.sign({ response }, SECRET, {
+        expiresIn: "1h",
+      });
 
-      return res.status(201).json({ ...response, user: req.session.user });
+      // send a mail
+      await MailService.sendVerificationMail({ email, lastname }, token);
+      return res.json({ ...response, token });
     } catch (error) {
       console.error("Register error:", error);
       return res
         .status(500)
         .json({ status: Status.FAILURE, message: "Internal server error" });
+    }
+  }
+
+  public static verifyUser(req: Request, res: Response) {
+    const token = req.headers["authorization"]?.split(" ")[1];
+    if (!token) return res.status(401).json("Missing token");
+
+    try {
+      const decode = jwt.verify(token, SECRET) as JwtPayload;
+      return res.status(201).json({ decode });
+    } catch (err) {
+      console.log(err);
     }
   }
 
@@ -123,7 +86,6 @@ export class UserController {
         });
       }
 
-      // success: set session and return minimal user info
       req.session.user = `${user.firstname} ${user.lastname}`;
       return res.status(200).json({
         status: Status.SUCCESS,
