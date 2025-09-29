@@ -39,14 +39,17 @@ export class UserController {
         return res.status(400).json({ response });
       }
 
-      // req.session.user = `${firstname} ${lastname}`;
-      let token = jwt.sign({ response }, SECRET, {
+      let token = jwt.sign({ id: response.id, email }, SECRET, {
         expiresIn: "1h",
       });
 
       // send a mail
       await MailService.sendVerificationMail({ email, lastname }, token);
-      return res.json({ ...response, token });
+      return res.json({
+        status: Status.SUCCESS,
+        message: `${response.message}. Please verify your email.`,
+        token,
+      });
     } catch (error) {
       console.error("Register error:", error);
       return res
@@ -56,7 +59,8 @@ export class UserController {
   }
 
   public static verifyUser(req: Request, res: Response) {
-    const token = req.headers["authorization"]?.split(" ")[1];
+    // const token = req.headers["authorization"]?.split(" ")[1];
+    const { id: token } = req.params;
     if (!token) return res.status(401).json("Missing token");
 
     try {
@@ -64,6 +68,7 @@ export class UserController {
       return res.status(201).json({ decode });
     } catch (err) {
       console.log(err);
+      return res.status(401).json({ message: "Failed to verify user" });
     }
   }
 
