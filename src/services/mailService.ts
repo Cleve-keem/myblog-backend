@@ -6,13 +6,13 @@ export default class MailService {
     token: string
   ) {
     const verificationMailTemplate: Record<string, string> = {
-      from: `${process.env.SMTP_USER} <${process.env.SMTP_USER}>`,
+      from: `${process.env.APP_NAME} <${process.env.SMTP_USER}>`,
       to: data.email!,
       subject: "Account verification",
       html: `
         <h1>Hello, ${data.lastname} 👋!</h1>
         <p>To complete your registration and activate your account, please verify your email by clicking the link below 🔗</p>
-        <a href="https://hackhimblog.netlify.app/account/verify/${token}">link</a>
+        <a href="https://hackhimblog.netlify.app/auth/account/verify/${token}" style="background: #000; padding: 10px 20px; text-decoration: none; border-radius: 6px;">link</a>
 
         <p>if you didn't request this, feel free to ignore the message. But if you're ready to get started, just click the link and you're all set!</p>
 
@@ -21,7 +21,6 @@ export default class MailService {
     };
     try {
       await transporter.sendMail(verificationMailTemplate);
-      console.log("Mail sent");
     } catch (error) {
       console.error("Error sending email:", error);
       return "Error sending email";
