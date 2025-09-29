@@ -8,6 +8,6 @@ export interface User {
   lastname: string;
   email: string;
   hashedPassword: string;
-  isVefied: boolean;
+  isVerified: boolean;
   createdAt: Date;
 }

@@ -31,7 +31,7 @@ export class UserController {
         lastname,
         email,
         hashedPassword,
-        isVefied: false,
+        isVerified: false,
         createdAt: new Date(),
       });
 
