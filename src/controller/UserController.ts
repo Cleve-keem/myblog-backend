@@ -45,6 +45,7 @@ export class UserController {
 
       // send a mail
       await MailService.sendVerificationMail({ email, lastname }, token);
+      console.log("Mail sent from controller");
       return res.json({
         status: Status.SUCCESS,
         message: `${response.message}. Please verify your email.`,
