@@ -12,7 +12,7 @@ export default class MailService {
       html: `
         <h1>Hello, ${data.lastname} 👋!</h1>
         <p>To complete your registration and activate your account, please verify your email by clicking the link below 🔗</p>
-        <a href="https://hackhimblog.netlify.app/auth/account/verify/${token}" style="background: #000; padding: 10px 20px; text-decoration: none; border-radius: 6px;">link</a>
+        <a href="https://hackhimblog.netlify.app/auth/account/verify/${token}" style="background: #000; padding: 10px 20px; text-decoration: none; border-radius: 6px; margin: 1rem 0";>Verify account</a>
 
         <p>if you didn't request this, feel free to ignore the message. But if you're ready to get started, just click the link and you're all set!</p>
 

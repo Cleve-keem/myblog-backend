@@ -21,11 +21,16 @@ const SECRET = process.env.JWT_SECRETKEY as string;
 
 export class UserController {
   public static async registerUser(req: Request, res: Response) {
+    console.time("signup-total"); // ⏱️ measure entire signup
     const { firstname, lastname, email, password }: UserSignUpRequest =
       req.body;
 
     try {
+      console.time("hashing");
       const hashedPassword = await hashPassword(password);
+      console.timeEnd("hashing"); // log how long hashing took
+
+      console.time("db-insert");
       const response = await UserService.createUser({
         firstname,
         lastname,
@@ -34,17 +39,26 @@ export class UserController {
         isVerified: false,
         createdAt: new Date(),
       });
+      console.timeEnd("db-insert"); // log db time
 
       if (response.status === Status.FAILURE) {
         return res.status(400).json({ response });
       }
 
+      console.time("jwt");
       let token = jwt.sign({ id: response.id, email }, SECRET, {
         expiresIn: "1h",
       });
+      console.timeEnd("mail"); // log mail sending time
 
       // send a mail
-      await MailService.sendVerificationMail({ email, lastname }, token);
+      console.log("mail start");
+      MailService.sendVerificationMail({ email, lastname }, token).catch(
+        (error) => console.log("error", error)
+      );
+      console.log("mail end");
+
+      console.timeEnd("signup-total"); // ⏱️ total time for signup
       console.log("Mail sent from controller");
       return res.json({
         status: Status.SUCCESS,
