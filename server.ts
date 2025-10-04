@@ -12,7 +12,7 @@ app.use(express.json());
 
 app.use(
   cors({
-    origin: ["http://localhost:5173", process.env.FRONTEND_URL as string],
+    origin: ["http://localhost:5173", "https://hackhimblog.netlify.app"],
     methods: ["GET", "POST", "PUT", "DELETE", "PATCH"],
     // credentials: true,
   })

@@ -36,7 +36,7 @@ export class UserRepository {
   }
 
   static async findUserByEmail(email: string): Promise<User | null> {
-    const user = await this.collection.findOne({ email: email });
+    const user = await this.collection.findOne({ email });
     return user ?? null;
   }
 }
