@@ -18,6 +18,9 @@ app.use(
 );
 
 app.use("/api", userRoutes);
+app.use("/", (req, res) => {
+  res.send("Backend is running on port 5000");
+});
 
 try {
   initRepositories();
