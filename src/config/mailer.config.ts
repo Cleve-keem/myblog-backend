@@ -10,7 +10,7 @@ if (!process.env.SENDGRID_API_KEY) {
   );
 }
 
-if (!process.env.SENDER_EMAIL) {
+if (!process.env.SENDGRID_FROM) {
   throw new Error("SENDER_EMAIL is not defined in the environment variables");
 }
 

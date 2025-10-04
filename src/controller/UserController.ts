@@ -11,12 +11,6 @@ import { UserRepository } from "../data/repository/UserRepository";
 import jwt, { JwtPayload } from "jsonwebtoken";
 import MailService from "../services/mailService";
 
-declare module "express-session" {
-  interface SessionData {
-    user?: string;
-  }
-}
-
 const SECRET = process.env.JWT_SECRETKEY as string;
 
 export class UserController {
@@ -106,11 +100,9 @@ export class UserController {
         });
       }
 
-      req.session.user = `${user.firstname} ${user.lastname}`;
       return res.status(200).json({
         status: Status.SUCCESS,
         message: "Login successful",
-        user: req.session.user,
       });
     } catch (err) {
       console.error("Login error:", err);
