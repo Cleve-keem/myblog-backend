@@ -9,9 +9,13 @@ const app = express();
 const PORT = process.env.PORT || 5000;
 
 app.use(express.json());
+
 app.use(
   cors({
-    origin: ["http://localhost:5173", "https://hackhimblog.netlify.app"],
+    origin: [
+      process.env.FRONTEND_DEVELOPMENT_URL as string,
+      process.env.PRODUCTION_FRONTEND_URL as string,
+    ],
     methods: ["GET", "POST", "PUT", "DELETE", "PATCH"],
     // credentials: true,
   })
