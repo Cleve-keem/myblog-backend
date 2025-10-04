@@ -1,4 +1,4 @@
-import { mailer } from "../config/mailer.config";
+import { transporter } from "../config/mailer.config";
 
 interface MailData {
   email: string;
@@ -15,7 +15,7 @@ export default class MailService {
         <h1 style="margin: 0; padding: 10px 0;">Hello, ${data.lastname} 👋!</h1>
         
         <p>Thanks for signing up with Hackhim Platform! To complete your registration and activate your account, please verify your email by clicking the link below 🔗</p>
-        <a href="https://hackhimblog.netlify.app/auth/account/verify/${token}" style="background: #000; padding: 10px 20px; text-decoration: none; border-radius: 6px; margin: 1rem 0";>Verify account</a>
+        <a href="https://hackhimblog.netlify.app/auth/account/verify/${token}" style="background: #000; color:#fff; padding: 10px 20px; text-decoration: none; border-radius: 6px; margin: 10px 0;">Verify account</a>
 
         <p>if you didn't request this, feel free to ignore the message. But if you're ready to get started, just click the link and you're all set!</p>
 
@@ -25,7 +25,7 @@ export default class MailService {
         <a href="https://hackhimblog.netlify.app" style="margin: 5px 0">Hackhim Platform</a>`,
     };
     try {
-      await mailer.send(verificationMailTemplate);
+      await transporter.sendMail(verificationMailTemplate);
       console.log("Verification email sent successfully");
     } catch (error: any) {
       console.error("Error sending email:", error);
