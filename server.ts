@@ -12,10 +12,7 @@ app.use(express.json());
 
 app.use(
   cors({
-    origin: [
-      process.env.FRONTEND_DEVELOPMENT_URL as string,
-      process.env.PRODUCTION_FRONTEND_URL as string,
-    ],
+    origin: ["http://localhost:5173", process.env.FRONTEND_URL as string],
     methods: ["GET", "POST", "PUT", "DELETE", "PATCH"],
     // credentials: true,
   })
