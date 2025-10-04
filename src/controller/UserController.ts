@@ -47,7 +47,6 @@ export class UserController {
       return res.json({
         status: Status.SUCCESS,
         message: `${response.message}. Please verify your email.`,
-        token,
       });
     } catch (error) {
       console.error("Register error:", error);
