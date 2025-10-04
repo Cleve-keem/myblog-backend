@@ -27,8 +27,11 @@ export default class MailService {
     try {
       await mailer.send(verificationMailTemplate);
       console.log("Verification email sent successfully");
-    } catch (error) {
+    } catch (error: any) {
       console.error("Error sending email:", error);
+      if (error.response) {
+        console.error("SendGrid error response:", error.response.body);
+      }
       return "Error sending email";
     }
   }
