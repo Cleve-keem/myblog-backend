@@ -1,26 +1,32 @@
-import { transporter } from "../config/mailer.config";
+import { mailer } from "../config/mailer.config";
+
+interface MailData {
+  email: string;
+  lastname: string;
+}
 
 export default class MailService {
-  public static async sendVerificationMail(
-    data: Record<string, string>,
-    token: string
-  ) {
-    const verificationMailTemplate: Record<string, string> = {
+  public static async sendVerificationMail(data: MailData, token: string) {
+    const verificationMailTemplate = {
       from: `${process.env.APP_NAME} <${process.env.SMTP_USER}>`,
       to: data.email!,
-      subject: "Account verification",
+      subject: "Confirm your account on Hackhim Platform",
       html: `
-        <h1>Hello, ${data.lastname} 👋!</h1>
-        <p>To complete your registration and activate your account, please verify your email by clicking the link below 🔗</p>
+        <h1 style="margin: 0; padding: 10px 0;">Hello, ${data.lastname} 👋!</h1>
+        
+        <p>Thanks for signing up with Hackhim Platform! To complete your registration and activate your account, please verify your email by clicking the link below 🔗</p>
         <a href="https://hackhimblog.netlify.app/auth/account/verify/${token}" style="background: #000; padding: 10px 20px; text-decoration: none; border-radius: 6px; margin: 1rem 0";>Verify account</a>
 
         <p>if you didn't request this, feel free to ignore the message. But if you're ready to get started, just click the link and you're all set!</p>
 
+        <p>Have fun, and don't hesitate to contact us with your feedback.</p>
+
         <p>Thanks</p>
-        <p>Hackhim Platform</p>`,
+        <a href="https://hackhimblog.netlify.app" style="margin: 5px 0">Hackhim Platform</a>`,
     };
     try {
-      await transporter.sendMail(verificationMailTemplate);
+      await mailer.send(verificationMailTemplate);
+      console.log("Verification email sent successfully");
     } catch (error) {
       console.error("Error sending email:", error);
       return "Error sending email";
